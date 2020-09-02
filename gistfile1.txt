@@ -1,0 +1,111 @@
+using System;
+using System.Collections.Generic;
+
+namespace Passenger_train_configurator
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            TrainStation city = new TrainStation();
+            city.JobTrainStation();
+            Console.ReadKey();
+        }
+    }
+
+    class TrainStation
+    {
+        private string _departurePoint;
+        private string _arrivalPoint;
+        private Train _train;
+        private Random _Generationpassengers = new Random();
+        private int _passengers;
+
+        public void JobTrainStation()
+        {
+            while (true)
+            {
+                int passengersPassengers = 0;
+                _passengers = _Generationpassengers.Next(100, 301);
+                InfoDirection(passengersPassengers);
+                SettingDirection();
+                Console.Write("Ввидите название поезда: ");
+                string userNameTrain = Console.ReadLine();
+                _train = new Train(userNameTrain, new List<Wagan>());
+                _train.CheckingFreeSeats(_passengers, passengersPassengers, _train);
+                Console.Clear();
+            }
+        }
+        private void InfoDirection(int passengersPassengers)
+        {
+            if (_train == null)
+            {
+                Console.WriteLine($"Напровление не выбрано");
+                Console.WriteLine($"Поезда нету!");
+            }
+            else
+            {
+                Console.SetCursorPosition(0, 0);
+                Console.Write($"Пункт отправления: {_departurePoint}");
+                Console.SetCursorPosition(40, 0);
+                Console.Write($"Пункт прибытия: {_arrivalPoint}\n");
+                _train.InfoTrain(_passengers, passengersPassengers);
+            }
+            Console.WriteLine("-----------------------------------------------------------------------------------------------------------------------");
+        }
+        private void SettingDirection()
+        {
+            Console.Write("Выбирите пункт отправления: ");
+            _departurePoint = Console.ReadLine();
+            Console.Write("Выбирите пункт отправления: ");
+            _arrivalPoint = Console.ReadLine();
+        }
+    }
+
+    class Train
+    {
+        private List<Wagan> _wagans;
+        private string _numberTrain;
+
+        public Train(string numberTrain, List<Wagan> wagans)
+        {
+            _wagans = wagans;
+            _numberTrain = numberTrain;
+        }
+
+        public void CheckingFreeSeats(int _passengers, int passengersPassengers, Train _train)
+        {
+            while (_passengers <= passengersPassengers)
+            {
+                AddWagan();
+                for (int i = 0; i < _train._wagans.Count; i++)
+                {
+                    passengersPassengers = FreePlaces(passengersPassengers, i);
+                }
+            }
+        }
+        public void InfoTrain(int _passengers, int passengersPassengers)
+        {
+            Console.WriteLine($"Название поезда: {_numberTrain}     | Количество пасажиров в поезде: {_passengers}");
+        }
+        private void AddWagan()
+        {
+            _wagans.Add(new Wagan());
+        }
+        private int FreePlaces(int passengersPassengers, int i)
+        {
+            return passengersPassengers = _wagans[i].Spaciousness;
+        }
+    }
+
+    class Wagan
+    {
+        private Random _random = new Random();
+        public int Spaciousness { get; private set; }
+
+        public Wagan()
+        {
+            Spaciousness = _random.Next(25, 35);
+        }
+    }
+}
